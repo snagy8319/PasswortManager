@@ -1,6 +1,7 @@
+
 import java.util.Scanner;
 
-public class LoginDataGenerator {
+public class PasswordManagerAlt {
   public static void main(String[] args) {
 
     boolean isrunning = true;
