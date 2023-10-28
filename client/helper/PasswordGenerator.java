@@ -2,11 +2,11 @@ package client.helper;
 
 import java.util.Random;
 
-public class PinCodeGenerator {
+public class PasswordGenerator {
 
-    private static final String ZEICHEN = "0123456789!@#$%^&*()_-+=<>?";
+    private final String ZEICHEN = "0123456789!@#$%^&*()_-+=<>?";
 
-    public static String generierePin(int laenge) {
+    public String generatePassword(int laenge) {
         Random rand = new Random();
         StringBuilder pin = new StringBuilder();
 

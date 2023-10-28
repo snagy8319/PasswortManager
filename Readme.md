@@ -1,12 +1,12 @@
-# Passwort Manager 
+# Passwort Manager
 
 --> Projektname ?
 
- * EasyPass
- * LockBox
- * PassPro
- * PassCli
- * ?
+* EasyPass
+* LockBox
+* PassPro
+* PassCli
+* ?
 
 ## Anforderungen
 
@@ -45,7 +45,6 @@ Siehe unten [link zu](#allgemeine-anforderungen)
 * Zusätzliche Funktionen
 * Datenschutz und Compliance
 
-
 ## Architektur
 
 > #### Client --> Der Client beinhaltet den Quellcode für den Passwort-Manager
@@ -54,59 +53,72 @@ Siehe unten [link zu](#allgemeine-anforderungen)
 
 ##### UML für Client
 
-```uml
-@startuml
-title Password Manager UML Diagram
+```mermaid
 
-class User {
-    -id: int
-    -username: string
-    -password: string
-    +login(username: string, password: string): bool
-    +logout(): void
-    +changePassword(oldPassword: string, newPassword: string): bool
-    +deleteUser(): void
-}
+classDiagram
 
-class Password {
-    -id: int
-    -userId: int
-    -website: string
-    -username: string
-    -password: string
-    -notes: string
-    +getWebsite(): string
-    +getUsername(): string
-    +getPassword(): string
-    +getNotes(): string
-    +setWebsite(website: string): void
-    +setUsername(username: string): void
-    +setPassword(password: string): void
-    +setNotes(notes: string): void
-}
+    PasswordManager --> User : use User
+    PasswordManager --> Users : has Users
+    PasswordManager --> Passwords : has Passwords
+    Passwords "1" --> "0..*"  Password : has Password
+    Passwords --> PasswordGenerator : uses
 
-class PasswordManager {
-    -users: List<User>
-    -passwords: List<Password>
-    +register(username: string, password: string): bool
-    +login(username: string, password: string): bool
-    +logout(userId: int): void
-    +changePassword(userId: int, oldPassword: string, newPassword: string): bool
-    +addPassword(userId: int, website: string, username: string, password: string, notes: string): bool
-    +getPasswords(userId: int): List<Password>
-    +getPassword(userId: int, passwordId: int): Password
-    +updatePassword(userId: int, passwordId: int, website: string, username: string, password: string, notes: string): bool
-    +deletePassword(userId: int, passwordId: int): bool
-}
+    Users "1" --> "0..*" User : has User
 
-User "1" *-- "*" Password
-PasswordManager "1" *-- "*" User
-PasswordManager "1" *-- "*" Password
 
-@enduml
-```
+    class User{
+     + UID id
+     + String username
+     + String loginPassword
+    }
 
-=============================================================================
+    class Users {
+      + List<User> Users
+      + User getUser(UID id)
+      + User addUser(User user)
+      + User deleteUser(UID id)
+      + User updateUser(UID id, User updatedUser)
+    }
+
+    class Password{
+      + UID id
+      + String website
+      + String username
+      + String password
+      + String notes
+      + String getWebsite()
+      + String getUsername()
+      + String getPassword()
+      + String getNotes()
+    }
+
+    class Passwords {
+      + List<Password> passwords
+      + List<Password> getAllPasswords()
+      + List<Password> deletePassword(UID id)
+      + List<Password> addPassword(Password password)
+      + List<Password> updatePassword(UID id, Password updatedPassword)
+    }
+
+    class PasswordGenerator{
+      + String ZEICHEN
+      + String generierePin()
+    }
+
+    class PasswordManager{
+      + List<User> users
+      + List<Password> passwords
+      + User currentUser
+      + void logoutUser()
+      + boolean loginUser(User user)
+      + boolean registerUser(User user)
+      + User getCurrentUser()
+      + void changeUserPassword(User user, String newPassword)
+    }  
+
+````
+
+===================================================================================================
 
 ## Ergbnisse aus dem Internet
 
@@ -172,3 +184,5 @@ PasswordManager "1" *-- "*" Password
 * Schutz vor Brute-Force-Angriffen und Wiederherstellung des Masterpassworts.
 
 Diese Anforderungen bilden eine solide Grundlage für die Entwicklung eines Password Managers, der Benutzern eine sichere und benutzerfreundliche Möglichkeit zur Verwaltung ihrer Passwörter bietet.
+
+

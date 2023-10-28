@@ -1,18 +1,15 @@
 package client.model;
 
 import java.rmi.server.UID;
-import java.util.ArrayList;
-import java.util.List;
 
 public class User {
 
-    private UID id;
+    private int id;
     private String username;
     private String password;
-    private List<Password> passwords;
 
-    public boolean changePassword(String oldPassword, String newPassword) {
-        return false;
+    public int getID() {
+        return id;
     }
 
     public String getUsername() {
@@ -23,22 +20,14 @@ public class User {
         return password;
     }
 
-    public List<Password> getPasswords() {
-        return passwords;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void addPassword(Password password) {
-        passwords.add(password);
+    public String setPassword(String newPassword) {
+        password = newPassword;
+        return password;
     }
 
     public User(String UserName, String Password) {
-        id = new UID();
+        id = new UID().hashCode();
         username = UserName;
         password = Password;
-        passwords = new ArrayList<>();
     }
 }

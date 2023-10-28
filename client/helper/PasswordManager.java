@@ -2,41 +2,58 @@ package client.helper;
 
 import java.rmi.server.UID;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import client.model.Password;
-import client.model.User;
+import client.model.*;
 
 public class PasswordManager {
 
     private UID uid = null;
-    private List<User> users;
-    private List<Password> passwords;
+    private Users users;
+    private Passwords passwords;
     private User currentUser;
 
-    public boolean loginUser(String username, String password) {
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                currentUser = user;
+    public PasswordManager(Users userslist, Passwords passwordslist) {
+        uid = new UID();
+        users = userslist;
+        passwords = passwordslist;
+        currentUser = null;
+    }
+
+    public boolean loginUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+        for (User u : users.getUsers()) {
+            if (u.getUsername().equals(user.getUsername()) && u.getPassword().equals(user.getPassword())) {
+                currentUser = u;
                 return true;
             }
         }
         return false;
     }
 
-    public void logoutUser(String username, String password) {
-        currentUser = null;
+    public boolean logoutUser(String username, String password) {
+        currentUser = getCurrentUser();
+        if (currentUser != null) {
+            currentUser = null;
+            return true;
+
+        }
+        return false;
     }
 
     public boolean registerUser(String username, String password) {
-
-        for (User user : users) {
+        List<User> userList = new ArrayList<>(Arrays.asList(users.getUsers()));
+        for (User user : userList) {
             if (user.getUsername().equals(username)) {
                 return false;
             }
         }
         User user = new User(username, password);
-        users.add(user);
+        userList.add(user);
+        users.addUser(user);
         currentUser = user;
         return true;
     }
@@ -59,28 +76,19 @@ public class PasswordManager {
 
     public boolean addPassword(String website, String username, String password, String notes) {
         if (currentUser != null) {
-            PinCodeGenerator.generierePin(12);
             Password newpassword = new Password(website, username, password, notes);
-            passwords.add(newpassword);
-            currentUser.addPassword(newpassword);
+            passwords.addPassword(newpassword);
             return true;
         }
         return false;
     }
 
-    public List<Password> getAllPasswords() {
+    public Passwords getAllPasswords() {
         if (currentUser != null) {
-            return currentUser.getPasswords();
+            return passwords;
         }
 
-        return new ArrayList<>();
+        return new Passwords();
     }
 
-    public PasswordManager() {
-        uid = new UID();
-        users = new ArrayList<>();
-        passwords = new ArrayList<>();
-        currentUser = null;
-
-    }
 }

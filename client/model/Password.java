@@ -4,13 +4,15 @@ import java.rmi.server.UID;
 
 public class Password {
 
-    private UID id;
+    private int id;
     private String website;
     private String username;
     private String password;
     private String notes;
 
-    // GET METHODS
+    public int getId() {
+        return id;
+    }
 
     public String getWebsite() {
         return website;
@@ -27,10 +29,9 @@ public class Password {
     public String getNotes() {
         return notes;
     }
-    // SET METHODS
 
     public Password(String website, String username, String password, String notes) {
-        id = new UID();
+        id = new UID().hashCode();
         this.website = website;
         this.username = username;
         this.password = password;
