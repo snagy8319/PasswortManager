@@ -1,0 +1,15 @@
+{
+    "java.project.sourcePaths": [
+        "d2.hauptprojekt",
+        "Stack/ManageStack/src",
+        "Stack/ManageStack"
+    ],
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar"
+        ],
+        "exclude": [
+            "d2.hauptprojekt/lib/log4j-docker-2.21.1.jar"
+        ]
+    }
+}

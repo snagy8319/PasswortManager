@@ -26,7 +26,10 @@
 				"DavidAnson.vscode-markdownlint",
 				"vscjava.vscode-maven",
 				"vscjava.vscode-java-dependency",
-				"vscjava.vscode-java-test"
+				"vscjava.vscode-java-test",
+				"GitHub.copilot-chat",
+				"GitHub.copilot",
+				"hediet.vscode-drawio"
 			]
 		}
 	}
