@@ -1,4 +1,4 @@
-package client.helper;
+package client.helper.ui;
 
 public class PrintedColor {
 
@@ -13,6 +13,10 @@ public class PrintedColor {
     // public static final String TEXT_PURPLE = "\u001B[35m";
     // public static final String TEXT_CYAN = "\u001B[36m";
     // public static final String TEXT_BLACK = "\u001B[30m";
+
+    public static final String boldMessage = "\u001B[1m"; // bold
+    public static final String underlinedMessage = "\u001B[4m"; // underlined
+    public static final String crossedOutMessage = "\\u001B[9m"; // crossed out
 
     // Java console color constants for background
     public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";

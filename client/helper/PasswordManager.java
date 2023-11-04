@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import client.model.*;
+import client.model.Password;
+import client.model.Passwords;
+import client.model.User;
+import client.model.Users;
 
 public class PasswordManager {
 
@@ -15,7 +18,7 @@ public class PasswordManager {
     private User currentUser;
 
     public PasswordManager(Users userslist, Passwords passwordslist) {
-        uid = new UID();
+        UID uid = new UID();
         users = userslist;
         passwords = passwordslist;
         currentUser = null;

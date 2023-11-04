@@ -1,18 +1,15 @@
-import client.helper.*;
-import client.model.*;
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import client.helper.PasswordGenerator;
+import client.helper.PasswordManager;
+import client.helper.UserInputOptions;
+import client.helper.ui.PrintedColor;
+import client.model.Passwords;
+import client.model.Users;
+
 public class App {
     public static void main(String[] args) {
-
-        String username;
-        String password;
-        String newUsername;
-        String newPassword;
-        String newNotes;
-        String newWebsite;
 
         // create a new password generator
         PasswordGenerator passwordGenerator = new PasswordGenerator();
@@ -30,10 +27,11 @@ public class App {
 
         while (true) {
             try {
-                System.out.println("===================================");
+                System.out.println(PrintedColor.warningMessage + "===================================");
                 System.out.println("|          PASSWORD MANAGER       |");
-                System.out.println("===================================");
-                System.out.println("| Options:                        |");
+                System.out.println("===================================" + PrintedColor.resetColor);
+                System.out.println("| " + PrintedColor.underlinedMessage + "Options:" + PrintedColor.resetColor
+                        + "                        |");
                 System.out.println("|        1. Login                 |");
                 System.out.println("|        2. Register              |");
                 System.out.println("|        3. Logout                |");
@@ -48,124 +46,22 @@ public class App {
 
                 switch (option) {
                     case 1:
-                        System.out.println("===================================");
-                        System.out.println("|             LOGIN              |");
-                        System.out.println("===================================");
-                        System.out.println("Please enter your username:");
-                        username = scanner.next();
-                        System.out.println("Please enter your password:");
-                        password = scanner.next();
-                        User user = new User(username, password);
-                        boolean loginSuccessful = passwordManager.loginUser(user);
-                        if (loginSuccessful) {
-                            System.out.println("Login successful!");
-                        } else {
-                            System.out.println("Login failed. User does not exists.");
-                        }
+                        UserInputOptions.login(scanner, passwordManager);
                         break;
                     case 2:
-                        System.out.println("===================================");
-                        System.out.println("|           REGISTER             |");
-                        System.out.println("===================================");
-                        System.out.println("Please enter your username:");
-                        newUsername = scanner.next();
-                        System.out.println("Please enter your password:");
-                        newPassword = scanner.next();
-                        User newUser = new User(newUsername, newPassword);
-                        User addedUser = users.addUser(newUser);
-                        if (addedUser != null) {
-                            System.out.println("Registration successful!");
-                        } else {
-                            System.out.println("Registration failed. Please try again.");
-                        }
+                        UserInputOptions.registration(scanner, users);
                         break;
                     case 3:
-                        boolean logout = false;
-                        User currentUser = passwordManager.getCurrentUser();
-                        if (currentUser != null) {
-                            logout = passwordManager.logoutUser(currentUser.getUsername(), currentUser.getPassword());
-                        }
-
-                        if (logout) {
-                            System.out.println("Logout successful!");
-                        } else {
-                            System.out.println("User is not logged-in");
-                        }
+                        UserInputOptions.logout(passwordManager);
                         break;
                     case 4:
-                        if (passwordManager.getCurrentUser() == null) {
-                            System.out.println("Please login first.");
-                            break;
-                        }
-                        System.out.println("===================================");
-                        System.out.println("|         ADD PASSWORD           |");
-                        System.out.println("===================================");
-                        System.out.println("Please enter the website:");
-                        newWebsite = scanner.next();
-                        System.out.println("Please enter the username:");
-                        newUsername = scanner.next();
-                        newPassword = passwordGenerator.generatePassword(12);
-                        System.out.println("Generated password: " + newPassword);
-                        System.out.println("Please enter any notes:");
-                        newNotes = scanner.next();
-                        Password newPassword2 = new Password(newWebsite, newUsername, newPassword, newNotes);
-                        Password addedPassword = passwords.addPassword(newPassword2);
-                        if (addedPassword != null) {
-                            System.out.println("Password added successfully!");
-                        } else {
-                            System.out.println("Password addition failed. Please try again.");
-                        }
+                        UserInputOptions.addPassword(passwordManager, passwordGenerator, passwords, scanner);
                         break;
                     case 5:
-                        if (passwordManager.getCurrentUser() == null) {
-                            System.out.println("Please login first.");
-                            break;
-                        }
-                        System.out.println("===================================");
-                        System.out.println("|        ALL PASSWORDS           |");
-                        System.out.println("===================================");
-                        for (Password password3 : passwords.getAllPasswords()) {
-                            System.out.println("Website: " + password3.getWebsite());
-                            System.out.println("Username: " + password3.getUsername());
-                            System.out.println("Password: " + password3.getPassword());
-                            System.out.println("Notes: " + password3.getNotes());
-                            System.out.println("===================================");
-                        }
+                        UserInputOptions.getAllPasswords(passwordManager, passwords);
                         break;
                     case 6:
-                        if (passwordManager.getCurrentUser() == null) {
-                            System.out.println("Please login first.");
-                            break;
-                        }
-                        System.out.println("===================================");
-                        System.out.println("|        UPDATE PASSWORD         |");
-                        System.out.println("===================================");
-                        System.out.println("Please enter the ID of the password to update:");
-
-                        int id = scanner.nextInt();
-                        Password passwordToUpdate = passwords.getPasswordById(id);
-                        if (passwordToUpdate == null) {
-                            System.out.println("Password not found");
-                            break;
-                        }
-                        System.out.println("Please enter the new website:");
-                        newWebsite = scanner.next();
-
-                        System.out.println("Please enter the new username:");
-                        newUsername = scanner.nextLine();
-
-                        newPassword = passwordGenerator.generatePassword(12);
-                        System.out.println("Generated password: " + newPassword);
-
-                        System.out.println("Please enter any new notes:");
-                        newNotes = scanner.next();
-                        Password updatedPassword = new Password(newWebsite, newUsername, newPassword, newNotes);
-                        Password updateSuccessful = passwords.updatePassword(id, updatedPassword);
-
-                        if (updateSuccessful != null) {
-                            System.out.println("Password has been updated with new Password" + newPassword);
-                        }
-
+                        UserInputOptions.updatePassword(passwordManager, passwords, passwordGenerator, scanner);
                         break;
                     case 8:
                         scanner.close();
@@ -174,11 +70,13 @@ public class App {
                         break;
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please enter a number.");
+                System.out.println(
+                        PrintedColor.errorMessage + "Invalid input. Please enter a number." + PrintedColor.resetColor);
                 scanner.nextLine();
 
             } catch (Exception e) {
-                System.out.println("An error occurred: " + e.getMessage());
+                System.out.println(
+                        PrintedColor.errorMessage + "An error occurred: " + e.getMessage() + PrintedColor.resetColor);
                 scanner.nextLine();
             }
         }
