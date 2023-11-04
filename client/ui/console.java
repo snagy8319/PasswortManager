@@ -5,7 +5,7 @@ public class console {
         System.out.println(message);
     }
 
-    public static void printError(String messages) {
+    public static void printError(String message) {
         System.err.println(message);
     }
 }
