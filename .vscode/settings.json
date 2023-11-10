@@ -2,7 +2,8 @@
     "java.project.sourcePaths": [
         "d2.hauptprojekt",
         "Stack/ManageStack/src",
-        "Stack/ManageStack"
+        "Stack/ManageStack",
+        "easy/src/main/java/com/pass"
     ],
     "java.project.referencedLibraries": {
         "include": [
