@@ -2,3 +2,14 @@
 04.11.2023 13:11:19 INFO: User has been logged in: Usernamenase
 04.11.2023 13:11:44 INFO: User has been registered Nase
 04.11.2023 13:11:59 INFO: User has been logged in: UsernameNase
+10.11.2023 13:34:22 INFO: User has failed to logged-out 
+10.11.2023 13:34:22 INFO: User has not been loggedout
+10.11.2023 13:34:39 INFO: [32mUser login has been failed: UsernameNase[0m
+10.11.2023 13:35:31 INFO: [32mUser login has been failed with Username Nase[0m
+10.11.2023 13:38:50 INFO: [31mUser login has been failed with Username Nase[0m
+10.11.2023 13:58:46 INFO: User has been registered Nase
+10.11.2023 13:58:46 INFO: [32mUser has been registired[0m
+10.11.2023 14:04:11 INFO: [32mUser has been logged in with Username Nase[0m
+10.11.2023 14:08:58 INFO: User has been registered Nase
+10.11.2023 14:08:58 INFO: [32mUser has been registired[0m
+10.11.2023 14:09:04 INFO: [32mUser has been logged in with Username Nase[0m

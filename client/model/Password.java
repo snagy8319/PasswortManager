@@ -37,4 +37,5 @@ public class Password {
         this.password = password;
         this.notes = notes;
     }
+
 }

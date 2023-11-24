@@ -45,10 +45,10 @@ public class Passwords {
         throw new IllegalArgumentException("Invalid password ID");
     }
 
-    public Password deletePassword(int id) {
+    public boolean deletePassword(int id) {
         Password passwordToDelete = getPasswordById(id);
-        passwords.remove(passwordToDelete);
-        return passwordToDelete;
+        boolean isPasswordDeleted = passwords.remove(passwordToDelete);
+        return isPasswordDeleted;
     }
 
 }
