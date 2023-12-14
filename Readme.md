@@ -120,13 +120,12 @@ classDiagram
 
 ===================================================================================================
 
-## Ergbnisse aus dem Internet
+## Ergebnisse aus dem Internet
 
 ## Allgemeine Anforderungen
 
 * Der Password Manager muss sicher und verschlüsselt sein, um die gespeicherten Passwörter zu schützen.
 
-*
 * Die Möglichkeit, Passwörter manuell einzugeben oder automatisch zu generieren.
 * Möglichkeit zur Sicherung und Wiederherstellung der Passwortdaten.
 
