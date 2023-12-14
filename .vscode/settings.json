@@ -12,5 +12,11 @@
         "exclude": [
             "d2.hauptprojekt/lib/log4j-docker-2.21.1.jar"
         ]
-    }
+    },
+    "terminal.integrated.env.windows": {
+        "PATH": "C:\\Users\\DEV\\.azurelogicapps\\dependencies\\DotNetSDK;${env:PATH}"
+    },
+    "omnisharp.dotNetCliPaths": [
+        "C:\\Users\\DEV\\.azurelogicapps\\dependencies\\DotNetSDK"
+    ]
 }

@@ -47,13 +47,15 @@ public class Main {
                         OutputConsole.writeConsole(isloggedout, "logout");
                         break;
                     case 4:
-                        UserInputOptions.addPassword(passwordManager, passwordGenerator, passwords, scanner);
+                        UserInputOptions.addPassword(passwordManager, passwordGenerator, passwords,
+                                scanner);
                         break;
                     case 5:
                         UserInputOptions.getAllPasswords(passwordManager, passwords);
                         break;
                     case 6:
-                        UserInputOptions.updatePassword(passwordManager, passwords, passwordGenerator, scanner);
+                        UserInputOptions.updatePassword(passwordManager, passwords,
+                                passwordGenerator, scanner);
                         break;
                     case 7:
                         UserInputOptions.deletePassord(passwordManager, passwords, scanner);
@@ -66,13 +68,13 @@ public class Main {
                 }
 
             } catch (InputMismatchException e) {
-                System.out.println(
-                        PrintedColor.errorMessage + "Invalid input. Please enter a number." + PrintedColor.resetColor);
+                System.out.println(PrintedColor.errorMessage
+                        + "Invalid input. Please enter a number." + PrintedColor.resetColor);
                 scanner.nextLine();
 
             } catch (Exception e) {
-                System.out.println(
-                        PrintedColor.errorMessage + "An error occurred: " + e.getMessage() + PrintedColor.resetColor);
+                System.out.println(PrintedColor.errorMessage + "An error occurred: "
+                        + e.getMessage() + PrintedColor.resetColor);
                 scanner.nextLine();
             }
         }
