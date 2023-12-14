@@ -1,0 +1,12 @@
+Dec 14, 2023 7:02:35 PM com.pass.helper.logging.LoggingHelper logToFile
+INFO: [31mUser login has been failed with Username 45463[0m
+Dec 14, 2023 7:02:59 PM com.pass.helper.logging.LoggingHelper logToFile
+INFO: User has been registered Nase
+Dec 14, 2023 7:02:59 PM com.pass.helper.logging.LoggingHelper logToConsole
+WARNING: [32mUser has been registired[0m
+Dec 14, 2023 7:03:07 PM com.pass.helper.logging.LoggingHelper logToFile
+INFO: [31mUser login has been failed with Username Nase[0m
+Dec 14, 2023 7:03:21 PM com.pass.helper.logging.LoggingHelper logToFile
+INFO: [31mUser login has been failed with Username Nase[0m
+Dec 14, 2023 7:03:42 PM com.pass.helper.logging.LoggingHelper logToFile
+INFO: [32mUser has been logged in with Username Nase[0m

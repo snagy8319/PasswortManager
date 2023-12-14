@@ -10,16 +10,16 @@ public class OutputConsole {
         if (valid) {
             switch (process) {
                 case "registering":
-                    LoggingHelper.logToConsole(PrintedColor.successMessage + "User has been registired"
-                            + PrintedColor.resetColor);
+                    LoggingHelper.logToConsole(PrintedColor.successMessage
+                            + "User has been registired" + PrintedColor.resetColor);
                     break;
                 case "logging":
-                    LoggingHelper.logToConsole(PrintedColor.successMessage + "User has been loggedin"
-                            + PrintedColor.resetColor);
+                    LoggingHelper.logToConsole(PrintedColor.successMessage
+                            + "User has been loggedin" + PrintedColor.resetColor);
                     break;
                 case "logout":
-                    LoggingHelper.logToConsole(PrintedColor.successMessage + "User  has been loggedout"
-                            + PrintedColor.resetColor);
+                    LoggingHelper.logToConsole(PrintedColor.successMessage
+                            + "User  has been loggedout" + PrintedColor.resetColor);
                     break;
                 default:
                     break;
@@ -27,7 +27,7 @@ public class OutputConsole {
         } else {
             switch (process) {
                 case "registering":
-                    LoggingHelper.logToConsole("User has not been registired");
+                    LoggingHelper.logToConsole("User has not been registerd");
                     break;
                 case "logging":
                     LoggingHelper.logToConsole("User has not been loggedin");
