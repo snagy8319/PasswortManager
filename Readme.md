@@ -1,12 +1,8 @@
 # Passwort Manager
 
---> Projektname ?
+Projektname
 
-* EasyPass
-* LockBox
-* PassPro
-* PassCli
-* ?
+EasyPass
 
 ## Anforderungen
 
