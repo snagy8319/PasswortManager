@@ -1,14 +1,14 @@
 package com.pass.helper;
 
 import java.rmi.server.UID;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import com.pass.database.DatabaseHandler;
 import com.pass.model.Password;
 import com.pass.model.Passwords;
 import com.pass.model.User;
 import com.pass.model.Users;
+
 
 public class PasswordManager {
 
@@ -16,25 +16,34 @@ public class PasswordManager {
     private Users users;
     private Passwords passwords;
     private User currentUser;
+    private DatabaseHandler dbHandler; // Declare a DatabaseHandler instance variable
+
+
 
     public PasswordManager(Users userslist, Passwords passwordslist) {
-        UID uid = new UID();
-        users = userslist;
-        passwords = passwordslist;
-        currentUser = null;
+        this.uid = new UID();
+        this.users = userslist;
+        this.passwords = passwordslist;
+        this.currentUser = null;
+        this.dbHandler = new DatabaseHandler();
     }
 
-    public boolean loginUser(User user) {
+    public boolean loginUser(User user) throws SQLException {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
-        for (User u : users.getUsers()) {
-            if (u.getUsername().equals(user.getUsername()) && u.getPassword().equals(user.getPassword())) {
-                currentUser = u;
-                return true;
-            }
+        Integer userId = dbHandler.validateUser(user.getUsername(), user.getPassword());
+
+        if (userId == null) {
+            System.out.println("User has not registered. Please register a User first");
+            return false;
+        } else if (userId == -1) {
+            System.out.println("Invalid password.");
+            return false;
+        } else {
+            System.out.println("Login successful!");
+            return true;
         }
-        return false;
     }
 
     public boolean logoutUser(String username, String password) {
@@ -47,18 +56,25 @@ public class PasswordManager {
         return false;
     }
 
-    public boolean registerUser(String username, String password) {
-        List<User> userList = new ArrayList<>(Arrays.asList(users.getUsers()));
-        for (User user : userList) {
-            if (user.getUsername().equals(username)) {
-                return false;
-            }
+    public boolean registerUser(String username, String password) throws SQLException {
+        // Check if the user already exists in the database
+        if (dbHandler.validateUser(username, password) != null) {
+            return false;
         }
-        User user = new User(username, password);
-        userList.add(user);
-        users.addUser(user);
-        currentUser = user;
-        return true;
+
+        // Add the user to the database
+        boolean addUserSuccessful = dbHandler.addUser(username, password);
+
+
+
+        if (addUserSuccessful) {
+            User user = new User(username, password);
+            currentUser = user;
+            System.out.println("New User has been registered");
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public User getCurrentUser() {
@@ -86,12 +102,28 @@ public class PasswordManager {
         return false;
     }
 
-    public Passwords getAllPasswords() {
+    public Passwords getEasyPasswords() {
+        Passwords passwords = new Passwords();
+
         if (currentUser != null) {
             return passwords;
         }
 
-        return new Passwords();
+        try {
+            ResultSet allPasswords = dbHandler.getAllEasyPasswords(currentUser.getUsername());
+            while (allPasswords.next()) {
+                String website = allPasswords.getString("website");
+                String username = allPasswords.getString("username");
+                String password = allPasswords.getString("password");
+                String notes = allPasswords.getString("notes");
+                Password passwordObj = new Password(website, username, password, notes);
+                passwords.addPassword(passwordObj);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return passwords;
     }
 
 }

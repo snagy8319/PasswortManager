@@ -53,8 +53,9 @@ public class LoggingHelper {
         logger.log(Level.FINEST, message);
     }
 
-    public static void logToFile(String message) {
-        logger.log(Level.INFO, message);
+    public static void logToFile(String message, Object... args) {
+        message = message.replaceAll("\u001B\\[[;\\d]*m", "");
+        logger.log(Level.INFO, String.format(message, args));
 
     }
 }

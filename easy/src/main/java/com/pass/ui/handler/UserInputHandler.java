@@ -1,22 +1,52 @@
 package com.pass.ui.handler;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import com.pass.database.DatabaseHandler;
 import com.pass.helper.PasswordManager;
 import com.pass.model.Password;
-import com.pass.model.Passwords;
-import com.pass.model.User;
 import com.pass.model.Users;
 
 public class UserInputHandler {
 
-    public static User registerUser(String newUsername, char[] newPassword, Users users) {
-        User newUser = new User(newUsername, new String(newPassword));
-        return users.addUser(newUser);
+    private static DatabaseHandler dbHandler = new DatabaseHandler();
+
+
+
+    public static boolean registerUser(String newUsername, String newPassword, Users users) {
+        try {
+            // Use the addUser method from DatabaseHandler to add the user
+            boolean isUserAdded = dbHandler.addUser(newUsername, newPassword.toString());
+            if (isUserAdded) {
+                System.out.println("User registered successfully!");
+                return true;
+            } else {
+                System.out.println("User registration failed.");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("An error occurred while registering the user: " + e.getMessage());
+            return false;
+        }
     }
 
     public static boolean login(String username, String password, PasswordManager passwordManager) {
-        User user = new User(username, password);
-        return passwordManager.loginUser(user);
+        try {
+            // Use the validateUser method from DatabaseHandler to validate the user
+            Integer userId = dbHandler.validateUser(username, password);
+            if (userId != null) {
+                System.out.println("User logged in successfully!");
+                return true;
+            } else {
+                System.out.println("Invalid username or password.");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("An error occurred while logging in the user: " + e.getMessage());
+            return false;
+        }
     }
 
     public static boolean logout(String username, String password,
@@ -25,25 +55,58 @@ public class UserInputHandler {
         return passwordManager.logoutUser(username, password);
     }
 
-    public static Password addPassword(PasswordManager passwordManager, Password newPassword,
-            Passwords passwords) {
-        return passwords.addPassword(newPassword);
+
+
+    public static boolean addEasyPassword(Password passwordInput) throws SQLException {
+        boolean addPasswordSuccessful = dbHandler.addEasyPassword(passwordInput.getWebsite(),
+                passwordInput.getUsername(), passwordInput.getPassword(), passwordInput.getNotes(),
+                passwordInput.getId());
+        if (addPasswordSuccessful) {
+            System.out.println("Password added successfully!");
+            return true;
+        } else {
+            System.out.println("An error occurred while adding the password.");
+            return false;
+        }
     }
 
-    public static List<Password> getAllPasswords(PasswordManager passwordManager,
-            Passwords passwords) {
-        return passwords.getAllPasswords();
+    public static List<Password> getEasyPasswords(String userNameCurrent) {
+        List<Password> passwords = new ArrayList<>();
+
+        try {
+            ResultSet allPasswords = dbHandler.getAllEasyPasswords(userNameCurrent);
+            while (allPasswords.next()) {
+                String website = allPasswords.getString("website");
+                String username = allPasswords.getString("username");
+                String password = allPasswords.getString("password");
+                String notes = allPasswords.getString("notes");
+                Password passwordObj = new Password(website, username, password, notes);
+                passwords.add(passwordObj);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return passwords;
     }
 
-
-    public static Password updatePassword(PasswordManager passwordManager, int id,
-            Password updatedPassword, Passwords passwords) {
-        return passwords.updatePassword(id, updatedPassword);
+    public static boolean updateEasyPassword(String username, String newPassword, int passID) {
+        try {
+            // Use the updateEasyPassword method from DatabaseHandler to update the password
+            dbHandler.updateEasyPassword(username, newPassword, passID);
+            System.out.println("Password updated successfully!");
+            return true;
+        } catch (SQLException e) {
+            System.err.println("An error occurred while updating the password: " + e.getMessage());
+            return false;
+        }
     }
 
-    public static boolean deletePassword(PasswordManager passwordManager, int id,
-            Passwords passwords) {
-        return passwords.deletePassword(id);
+    public static boolean deleteEasyPassword(int passID) throws SQLException {
+        // Use the deleteEasyPassword method from DatabaseHandler to delete the password
+        dbHandler.deleteEasyPassword(passID);
+        System.out.println("Password deleted successfully!");
+        return true;
     }
 
     // Similar changes for other methods

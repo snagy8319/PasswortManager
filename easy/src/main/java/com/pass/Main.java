@@ -1,11 +1,12 @@
 // No package declaration needed since the expected package is empty
 package com.pass;
 
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import com.pass.database.DatabaseHandler;
 import com.pass.helper.PasswordGenerator;
 import com.pass.helper.PasswordManager;
 import com.pass.model.Passwords;
@@ -16,6 +17,8 @@ public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
     private static final String INVALID_INPUT_MESSAGE = "Invalid input. Please enter a number.";
     private static final String ERROR_MESSAGE = "An error occurred: ";
+    private static DatabaseHandler dbHandler = new DatabaseHandler();
+
 
     /**
      * Die Hauptmethode des Programms. Erstellt einen neuen Passwortgenerator, Benutzer, Passwörter
@@ -24,6 +27,7 @@ public class Main {
      * @param args Die Befehlszeilenargumente.
      */
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
         // create a new password generator
         PasswordGenerator passwordGenerator = new PasswordGenerator();
 
@@ -36,8 +40,6 @@ public class Main {
         // create a new password manager
         PasswordManager passwordManager = new PasswordManager(users, passwords);
 
-        Scanner scanner = new Scanner(System.in);
-
         while (true) {
             try {
                 UserInputOptions.welcomeMessage();
@@ -49,6 +51,8 @@ public class Main {
                 scanner.nextLine(); // discard the current input
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, ERROR_MESSAGE + e.getMessage(), e);
+            } finally {
+                dbHandler.close();
             }
         }
     }
@@ -62,9 +66,11 @@ public class Main {
      * @param users the users object
      * @param passwords the passwords object
      * @param passwordGenerator the password generator object
+     * @throws SQLException
      */
     private static void handleOption(int option, Scanner scanner, PasswordManager passwordManager,
-            Users users, Passwords passwords, PasswordGenerator passwordGenerator) {
+            Users users, Passwords passwords, PasswordGenerator passwordGenerator)
+            throws SQLException {
         switch (option) {
             case 1:
                 handleLogin(scanner, passwordManager);
@@ -102,9 +108,11 @@ public class Main {
      * 
      * @param scanner Der Scanner zum Einlesen der Benutzereingabe.
      * @param passwordManager Der PasswordManager zur Verwaltung der Passwörter.
+     * @throws SQLException
      */
-    private static void handleLogin(Scanner scanner, PasswordManager passwordManager) {
-        UserInputOptions.login(passwordManager);
+    private static void handleLogin(Scanner scanner, PasswordManager passwordManager)
+            throws SQLException {
+        UserInputOptions.login(passwordManager, scanner);
     }
 
 
@@ -138,7 +146,7 @@ public class Main {
      */
     private static void handleAddPassword(PasswordManager passwordManager,
             PasswordGenerator passwordGenerator, Passwords passwords, Scanner scanner) {
-        UserInputOptions.addPassword(passwordManager, passwordGenerator, passwords, scanner);
+        UserInputOptions.addPassword(passwordGenerator, passwords, scanner);
     }
 
     /**
