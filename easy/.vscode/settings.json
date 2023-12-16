@@ -4,5 +4,6 @@
     },
     "omnisharp.dotNetCliPaths": [
         "C:\\Users\\DEV\\.azurelogicapps\\dependencies\\DotNetSDK"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
