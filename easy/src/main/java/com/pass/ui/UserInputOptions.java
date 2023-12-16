@@ -1,5 +1,6 @@
 package com.pass.ui;
 
+import java.util.List;
 import java.util.Scanner;
 
 import com.pass.helper.PasswordGenerator;
@@ -10,8 +11,13 @@ import com.pass.model.Password;
 import com.pass.model.Passwords;
 import com.pass.model.User;
 import com.pass.model.Users;
+import com.pass.ui.handler.UserInputHandler;
 
 public class UserInputOptions {
+    private static Scanner scanner;
+
+    public UserInputOptions(Scanner scanner, UserInputHandler userInputHandler) {}
+
     /**
      * Gibt eine Begrüßungsnachricht und eine Liste von Optionen auf der Konsole aus.
      * 
@@ -46,7 +52,7 @@ public class UserInputOptions {
      * @param users Das Users-Objekt, das die Sammlung von Benutzern darstellt.
      * @return true, wenn der Benutzer erfolgreich registriert ist, andernfalls false.
      */
-    public static boolean registration(Scanner scanner, Users users) {
+    public static void registration(Scanner scanner, Users users) {
 
         System.out.println(PrintedColor.warningMessage + "===================================");
         System.out.println("|           REGISTER             |");
@@ -56,25 +62,22 @@ public class UserInputOptions {
         String newUsername = scanner.next().trim();
         if (newUsername.isEmpty()) {
             System.out.println("Username cannot be empty");
-            return false;
         }
 
         System.out.println("Please enter your password:");
         char[] newPassword = System.console().readPassword();
         if (newPassword.length == 0) {
             System.out.println("Password cannot be empty");
-            return false;
         }
 
-        User newUser = new User(newUsername, new String(newPassword));
-        User addedUser = users.addUser(newUser);
+        User addedUser = UserInputHandler.registerUser(newUsername, newPassword, users);
 
         if (addedUser != null) {
             LoggingHelper.logToFile("User has been registered " + addedUser.getUsername());
         } else {
-            LoggingHelper.logToFile("User registration has failed " + newUser.getUsername());
+            LoggingHelper.logToFile("User registration has failed " + newUsername);
         }
-        return true;
+
     }
 
     /**
@@ -85,7 +88,7 @@ public class UserInputOptions {
      *        verwendet wird.
      * @return true, wenn die Anmeldung erfolgreich ist, andernfalls false.
      */
-    public static boolean login(Scanner scanner, PasswordManager passwordManager) {
+    public static void login(PasswordManager passwordManager) {
 
         System.out.println(PrintedColor.warningMessage + "===================================");
         System.out.println("|             LOGIN              |");
@@ -96,18 +99,20 @@ public class UserInputOptions {
         System.out.println("Please enter your password:");
         String password = scanner.next();
 
-        User user = new User(username, password);
-        boolean isLoginSuccessful = passwordManager.loginUser(user);
+        boolean isLoginSuccessful = UserInputHandler.login(username, password, passwordManager);
+
+
         if (isLoginSuccessful) {
             LoggingHelper.logToFile(
                     PrintedColor.successMessage + "User has been logged in with Username "
-                            + user.getUsername() + PrintedColor.resetColor);
+                            + username + PrintedColor.resetColor);
         } else {
             LoggingHelper.logToFile(
                     PrintedColor.errorMessage + "User login has been failed with Username "
-                            + user.getUsername() + PrintedColor.resetColor);
+                            + username + PrintedColor.resetColor);
         }
-        return isLoginSuccessful;
+
+
     }
 
     /**
@@ -117,15 +122,17 @@ public class UserInputOptions {
      * @return true, wenn der Benutzer erfolgreich abgemeldet ist, false sonst (Fehler beim Abmelden
      *         oder kein Benutzer ist derzeit angemeldet)
      */
-    public static boolean logout(PasswordManager passwordManager) {
+    public static void logout(PasswordManager passwordManager) {
         User currentUser = passwordManager.getCurrentUser();
         if (currentUser == null) {
             LoggingHelper.logToFile("No user is currently logged in");
-            return false;
         }
 
-        boolean isLogout =
-                passwordManager.logoutUser(currentUser.getUsername(), currentUser.getPassword());
+        String username = currentUser.getUsername();
+        String password = currentUser.getPassword();
+
+        boolean isLogout = UserInputHandler.logout(username, password, passwordManager);
+
 
         if (isLogout) {
             LoggingHelper.logToFile("User " + currentUser.getUsername() + " has been logged out");
@@ -133,12 +140,11 @@ public class UserInputOptions {
             LoggingHelper.logToFile("User " + currentUser.getUsername() + " failed to log out");
         }
 
-        return isLogout;
     }
 
 
     public static void addPassword(PasswordManager passwordManager,
-            PasswordGenerator passwordGenerator, Passwords passwords, Scanner scanner) {
+            PasswordGenerator passwordGenerator, Passwords passwords, Scanner userInputScanner) {
 
         if (passwordManager.getCurrentUser() == null) {
             System.out.println("Please login first.");
@@ -150,31 +156,34 @@ public class UserInputOptions {
         System.out.println("===================================" + PrintedColor.resetColor);
 
         System.out.println("Please enter the website:");
-        String newWebsite = scanner.next().trim();
-        if (newWebsite.isEmpty()) {
+        String websiteName = userInputScanner.next().trim();
+        if (websiteName.isEmpty()) {
             System.out.println("Website cannot be empty");
             return;
         }
 
         System.out.println("Please enter the username:");
-        String newUsername = scanner.next().trim();
-        if (newUsername.isEmpty()) {
+        String userName = userInputScanner.next().trim();
+        if (userName.isEmpty()) {
             System.out.println("Username cannot be empty");
             return;
         }
 
         System.out.println("Please enter the desired password length:");
-        int passwordLength = scanner.nextInt();
-        String newPassword = passwordGenerator.generatePassword(passwordLength);
-        System.out.println("Generated password: " + PrintedColor.boldMessage + newPassword
+        int desiredPasswordLength = userInputScanner.nextInt();
+        String generatedPassword = passwordGenerator.generatePassword(desiredPasswordLength);
+        System.out.println("Generated password: " + PrintedColor.boldMessage + generatedPassword
                 + PrintedColor.resetColor);
 
         System.out.println("Please enter any notes:");
-        scanner.nextLine(); // consume the newline left by nextInt
-        String newNotes = scanner.nextLine();
+        userInputScanner.nextLine(); // consume the newline left by nextInt
+        String userNotes = userInputScanner.nextLine();
 
-        Password newPassword2 = new Password(newWebsite, newUsername, newPassword, newNotes);
-        Password addedPassword = passwords.addPassword(newPassword2);
+        Password newPassword = new Password(websiteName, userName, generatedPassword, userNotes);
+        Password addedPassword =
+                UserInputHandler.addPassword(passwordManager, newPassword, passwords);
+
+
         if (addedPassword != null) {
             System.out.println(PrintedColor.successMessage + "Password added successfully!"
                     + PrintedColor.resetColor);
@@ -195,7 +204,9 @@ public class UserInputOptions {
         System.out.println("|        ALL PASSWORDS           |");
         System.out.println("===================================" + PrintedColor.resetColor);
 
-        if (passwords.getAllPasswords().size() == 0) {
+        List<Password> allPasswords = UserInputHandler.getAllPasswords(passwordManager, passwords);
+
+        if (allPasswords.isEmpty()) {
             System.err.println(PrintedColor.infoMessage + "No Passwords currently available"
                     + PrintedColor.resetColor);
             return;
@@ -248,7 +259,8 @@ public class UserInputOptions {
         String newNotes = scanner.next();
 
         Password updatedPassword = new Password(newWebsite, newUsername, newPassword, newNotes);
-        Password updateSuccessful = passwords.updatePassword(id, updatedPassword);
+        Password updateSuccessful =
+                UserInputHandler.updatePassword(passwordManager, id, updatedPassword, passwords);
 
         if (updateSuccessful != null) {
             System.out.println(PrintedColor.successMessage
@@ -257,7 +269,7 @@ public class UserInputOptions {
         }
     }
 
-    public static void deletePassord(PasswordManager passwordManager, Passwords passwords,
+    public static void deletePassword(PasswordManager passwordManager, Passwords passwords,
             Scanner scanner) {
 
         if (passwordManager.getCurrentUser() == null) {
@@ -271,17 +283,18 @@ public class UserInputOptions {
 
         System.out.println("Please enter the ID of the password to delete:");
         int id = scanner.nextInt();
-        Password password2Delete = passwords.getPasswordById(id);
+        Password passwordToDelete = passwords.getPasswordById(id);
 
-        if (password2Delete == null) {
+        if (passwordToDelete == null) {
             System.out.println(
                     PrintedColor.errorMessage + "Password not found" + PrintedColor.resetColor);
             return;
         }
 
-        boolean deleted = passwords.deletePassword(id);
+        boolean deletionSuccessful =
+                UserInputHandler.deletePassword(passwordManager, id, passwords);
 
-        if (deleted) {
+        if (deletionSuccessful) {
             System.out.println("Password with ID " + id + " has been deleted successfully");
         } else {
             System.out.println(PrintedColor.errorMessage + "Failed to delete the password"

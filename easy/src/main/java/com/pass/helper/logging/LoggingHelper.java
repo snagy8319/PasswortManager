@@ -19,13 +19,16 @@ public class LoggingHelper {
 
         @Override
         public String format(LogRecord record) {
+            String message = record.getMessage();
+            message = message.replaceAll("\u001B\\[[;\\d]*m", ""); // remove ANSI color codes
             return String.format(format, new Date(record.getMillis()),
-                    record.getLevel().getLocalizedName(), record.getMessage());
+                    record.getLevel().getLocalizedName(), message);
         }
     }
 
     static {
         try {
+            logger.setUseParentHandlers(false);
             // for console output
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setFormatter(new CustomFormatter());
