@@ -8,10 +8,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.pass.database.DatabaseHandler;
 import com.pass.helper.PasswordGenerator;
-import com.pass.helper.PasswordManager;
 import com.pass.model.Passwords;
 import com.pass.model.Users;
-import com.pass.ui.*;
+import com.pass.ui.UserInputOptions;
 
 public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
@@ -38,14 +37,14 @@ public class Main {
         Passwords passwords = new Passwords();
 
         // create a new password manager
-        PasswordManager passwordManager = new PasswordManager(users, passwords);
+        // PasswordManager passwordManager = new PasswordManager(users, passwords);
 
         while (true) {
             try {
                 UserInputOptions.welcomeMessage();
                 int option = scanner.nextInt();
 
-                handleOption(option, scanner, passwordManager, users, passwords, passwordGenerator);
+                handleOption(option, scanner, users, passwords, passwordGenerator);
             } catch (InputMismatchException e) {
                 LOGGER.warning(INVALID_INPUT_MESSAGE);
                 scanner.nextLine(); // discard the current input
@@ -68,30 +67,29 @@ public class Main {
      * @param passwordGenerator the password generator object
      * @throws SQLException
      */
-    private static void handleOption(int option, Scanner scanner, PasswordManager passwordManager,
-            Users users, Passwords passwords, PasswordGenerator passwordGenerator)
-            throws SQLException {
+    private static void handleOption(int option, Scanner scanner, Users users, Passwords passwords,
+            PasswordGenerator passwordGenerator) throws SQLException {
         switch (option) {
             case 1:
-                handleLogin(scanner, passwordManager);
+                handleLogin(scanner);
                 break;
             case 2:
                 handleRegistration(scanner, users);
                 break;
             case 3:
-                handleLogout(passwordManager);
+                handleLogout();
                 break;
             case 4:
-                handleAddPassword(passwordManager, passwordGenerator, passwords, scanner);
+                handleAddPassword(passwordGenerator, passwords, scanner);
                 break;
             case 5:
-                handleGetAllPasswords(passwordManager, passwords);
+                handleGetAllPasswords(passwords);
                 break;
             case 6:
-                handleUpdatePassword(passwordManager, passwords, passwordGenerator, scanner);
+                handleUpdatePassword(passwords, passwordGenerator, scanner);
                 break;
             case 7:
-                handleDeletePassword(passwordManager, passwords, scanner);
+                handleDeletePassword(passwords, scanner);
                 break;
             case 8:
                 handleExit(scanner);
@@ -110,9 +108,8 @@ public class Main {
      * @param passwordManager Der PasswordManager zur Verwaltung der Passwörter.
      * @throws SQLException
      */
-    private static void handleLogin(Scanner scanner, PasswordManager passwordManager)
-            throws SQLException {
-        UserInputOptions.login(passwordManager, scanner);
+    private static void handleLogin(Scanner scanner) throws SQLException {
+        UserInputOptions.login(scanner);
     }
 
 
@@ -132,8 +129,8 @@ public class Main {
      *
      * @param passwordManager Der PasswordManager, der verwendet wird.
      */
-    private static void handleLogout(PasswordManager passwordManager) {
-        UserInputOptions.logout(passwordManager);
+    private static void handleLogout() {
+        UserInputOptions.logout();
     }
 
     /**
@@ -144,8 +141,8 @@ public class Main {
      * @param passwords Die Liste der vorhandenen Passwörter.
      * @param scanner Der Scanner, um Benutzereingaben zu lesen.
      */
-    private static void handleAddPassword(PasswordManager passwordManager,
-            PasswordGenerator passwordGenerator, Passwords passwords, Scanner scanner) {
+    private static void handleAddPassword(PasswordGenerator passwordGenerator, Passwords passwords,
+            Scanner scanner) {
         UserInputOptions.addPassword(passwordGenerator, passwords, scanner);
     }
 
@@ -155,9 +152,8 @@ public class Main {
      * @param passwordManager Das Passwort-Manager-Objekt.
      * @param passwords Die Passwort-Objekte.
      */
-    private static void handleGetAllPasswords(PasswordManager passwordManager,
-            Passwords passwords) {
-        UserInputOptions.getAllPasswords(passwordManager, passwords);
+    private static void handleGetAllPasswords(Passwords passwords) {
+        UserInputOptions.getAllPasswords(passwords);
     }
 
     /**
@@ -170,9 +166,9 @@ public class Main {
      *        wird.
      * @param scanner Der Scanner, der für die Benutzereingabe verwendet wird.
      */
-    private static void handleUpdatePassword(PasswordManager passwordManager, Passwords passwords,
+    private static void handleUpdatePassword(Passwords passwords,
             PasswordGenerator passwordGenerator, Scanner scanner) {
-        UserInputOptions.updatePassword(passwordManager, passwords, passwordGenerator, scanner);
+        UserInputOptions.updatePassword(passwords, passwordGenerator, scanner);
     }
 
     /**
@@ -182,9 +178,8 @@ public class Main {
      * @param passwords Die Liste der Passwörter, aus der das Passwort gelöscht werden soll.
      * @param scanner Der Scanner, um Benutzereingaben zu lesen.
      */
-    private static void handleDeletePassword(PasswordManager passwordManager, Passwords passwords,
-            Scanner scanner) {
-        UserInputOptions.deletePassword(passwordManager, passwords, scanner);
+    private static void handleDeletePassword(Passwords passwords, Scanner scanner) {
+        UserInputOptions.deletePassword(passwords, scanner);
     }
 
     /**

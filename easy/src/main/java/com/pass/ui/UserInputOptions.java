@@ -3,21 +3,19 @@ package com.pass.ui;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
-
+import java.util.UUID;
 import com.pass.helper.PasswordGenerator;
-import com.pass.helper.PasswordManager;
 import com.pass.helper.logging.LoggingHelper;
 import com.pass.helper.ui.PrintedColor;
 import com.pass.model.Password;
 import com.pass.model.Passwords;
-import com.pass.model.User;
 import com.pass.model.Users;
-import com.pass.ui.handler.*;
+import com.pass.ui.handler.UserInputHandler;
 
 public class UserInputOptions {
-    private static Scanner scanner;
     public static boolean isLoginSuccessful;
     public static String userNameCurrent;
+    private static Scanner scanner;
 
 
     public UserInputOptions(Scanner scanner) {
@@ -93,7 +91,7 @@ public class UserInputOptions {
      *        verwendet wird.
      * @return true, wenn die Anmeldung erfolgreich ist, andernfalls false.
      */
-    public static void login(PasswordManager passwordManager, Scanner scanner) throws SQLException {
+    public static void login(Scanner scanner) throws SQLException {
 
 
         System.out.println(PrintedColor.warningMessage + "===================================");
@@ -106,7 +104,7 @@ public class UserInputOptions {
         String password = scanner.next();
 
 
-        isLoginSuccessful = UserInputHandler.login(username, password, passwordManager);
+        isLoginSuccessful = UserInputHandler.login(username, password);
         userNameCurrent = username;
         if (isLoginSuccessful) {
             LoggingHelper.logToFile(
@@ -129,22 +127,21 @@ public class UserInputOptions {
      * @return true, wenn der Benutzer erfolgreich abgemeldet ist, false sonst (Fehler beim Abmelden
      *         oder kein Benutzer ist derzeit angemeldet)
      */
-    public static void logout(PasswordManager passwordManager) {
-        User currentUser = passwordManager.getCurrentUser();
-        if (currentUser == null) {
+    public static void logout() {
+
+        if (userNameCurrent == null) {
             LoggingHelper.logToFile("No user is currently logged in");
         }
 
-        String username = currentUser.getUsername();
-        String password = currentUser.getPassword();
-
-        boolean isLogout = UserInputHandler.logout(username, password, passwordManager);
+        userNameCurrent = null;
+        isLoginSuccessful = false;
 
 
-        if (isLogout) {
-            LoggingHelper.logToFile("User " + currentUser.getUsername() + " has been logged out");
+
+        if (userNameCurrent == null) {
+            LoggingHelper.logToFile("User has been logged out");
         } else {
-            LoggingHelper.logToFile("User " + currentUser.getUsername() + " failed to log out");
+            LoggingHelper.logToFile("User failed to log out");
         }
 
     }
@@ -154,8 +151,6 @@ public class UserInputOptions {
             Scanner userInputScanner) {
         Password passwordInput;
         boolean addedPassword;
-
-
 
         if (!isLoginSuccessful) {
             System.out.println("Please login first.");
@@ -191,7 +186,11 @@ public class UserInputOptions {
         String userNotes = userInputScanner.nextLine();
 
 
-        passwordInput = new Password(website, userName, generatedPassword, userNotes);
+        UUID uuid = UUID.randomUUID();
+        long leastSignificantBits = uuid.getLeastSignificantBits();
+        int id = Math.abs((int) leastSignificantBits);
+
+        passwordInput = new Password(id, website, userName, generatedPassword, userNotes);
 
         try {
             addedPassword = UserInputHandler.addEasyPassword(passwordInput);
@@ -209,7 +208,7 @@ public class UserInputOptions {
         }
     }
 
-    public static void getAllPasswords(PasswordManager passwordManager, Passwords passwords) {
+    public static void getAllPasswords(Passwords passwords) {
 
         if (!isLoginSuccessful) {
             System.out.println("Please login first.");
@@ -249,8 +248,8 @@ public class UserInputOptions {
 
     }
 
-    public static void updatePassword(PasswordManager passwordManager, Passwords passwords,
-            PasswordGenerator passwordGenerator, Scanner scanner) {
+    public static void updatePassword(Passwords passwords, PasswordGenerator passwordGenerator,
+            Scanner scanner) {
 
         if (!isLoginSuccessful) {
             System.out.println("Please login first.");
@@ -261,7 +260,7 @@ public class UserInputOptions {
         System.out.println("|        UPDATE PASSWORD         |");
         System.out.println("===================================" + PrintedColor.resetColor);
 
-        UserInputOptions.getAllPasswords(passwordManager, passwords);
+        UserInputOptions.getAllPasswords(passwords);
         System.out.println("Please enter the ID of the password to update:");
         int id = scanner.nextInt();
 
@@ -281,8 +280,7 @@ public class UserInputOptions {
         }
     }
 
-    public static void deletePassword(PasswordManager passwordManager, Passwords passwords,
-            Scanner scanner) {
+    public static void deletePassword(Passwords passwords, Scanner scanner) {
 
         if (!isLoginSuccessful) {
             System.out.println("Please login first");
@@ -295,13 +293,6 @@ public class UserInputOptions {
 
         System.out.println("Please enter the ID of the password to delete:");
         int id = scanner.nextInt();
-        Password passwordToDelete = passwords.getPasswordById(id);
-
-        if (passwordToDelete == null) {
-            System.out.println(
-                    PrintedColor.errorMessage + "Password not found" + PrintedColor.resetColor);
-            return;
-        }
 
         boolean deletionSuccessful;
         try {

@@ -1,7 +1,5 @@
 package com.pass.model;
 
-import java.rmi.server.UID;
-
 public class Password {
 
     private int id;
@@ -30,12 +28,13 @@ public class Password {
         return notes;
     }
 
-    public Password(String website, String username, String password, String notes) {
-        id = Math.abs(new UID().hashCode());
+    public Password(Integer id, String website, String username, String password, String notes) {
+        this.id = id;
         this.website = website;
         this.username = username;
         this.password = password;
         this.notes = notes;
     }
+
 
 }

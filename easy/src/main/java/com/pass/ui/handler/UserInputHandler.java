@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import com.pass.database.DatabaseHandler;
-import com.pass.helper.PasswordManager;
 import com.pass.model.Password;
 import com.pass.model.Users;
 
@@ -32,7 +31,7 @@ public class UserInputHandler {
         }
     }
 
-    public static boolean login(String username, String password, PasswordManager passwordManager) {
+    public static boolean login(String username, String password) {
         try {
             // Use the validateUser method from DatabaseHandler to validate the user
             Integer userId = dbHandler.validateUser(username, password);
@@ -47,12 +46,6 @@ public class UserInputHandler {
             System.err.println("An error occurred while logging in the user: " + e.getMessage());
             return false;
         }
-    }
-
-    public static boolean logout(String username, String password,
-            PasswordManager passwordManager) {
-
-        return passwordManager.logoutUser(username, password);
     }
 
 
@@ -80,7 +73,8 @@ public class UserInputHandler {
                 String username = allPasswords.getString("username");
                 String password = allPasswords.getString("password");
                 String notes = allPasswords.getString("notes");
-                Password passwordObj = new Password(website, username, password, notes);
+                Integer id = allPasswords.getInt("passID");
+                Password passwordObj = new Password(id, website, username, password, notes);
                 passwords.add(passwordObj);
             }
         } catch (SQLException e) {
@@ -109,5 +103,5 @@ public class UserInputHandler {
         return true;
     }
 
-    // Similar changes for other methods
+
 }
