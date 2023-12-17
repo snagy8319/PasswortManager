@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import com.pass.database.DatabaseHandler;
+import com.pass.helper.ui.PrintedColor;
 import com.pass.model.Password;
 import com.pass.model.Users;
 
@@ -36,7 +37,8 @@ public class UserInputHandler {
             // Use the validateUser method from DatabaseHandler to validate the user
             Integer userId = dbHandler.validateUser(username, password);
             if (userId != null) {
-                System.out.println("User logged in successfully!");
+                System.out.println(PrintedColor.successMessage + "User logged in successfully!"
+                        + PrintedColor.resetColor);
                 return true;
             } else {
                 System.out.println("Invalid username or password.");

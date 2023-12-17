@@ -1,5 +1,6 @@
 package com.pass.database;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -7,32 +8,57 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import com.pass.helper.ui.PrintedColor;
 
 public class DatabaseHandler {
     private Connection connection;
 
     public DatabaseHandler() {
-        connectToDatabase();
+        try {
+            connectToDatabase();
+        } catch (ClassNotFoundException e) {
+
+            e.printStackTrace();
+        }
         createUsersTableIfNotExists();
         createPasswordsTableIfNotExists();
 
     }
 
 
-    private void connectToDatabase() {
+    private void connectToDatabase() throws ClassNotFoundException {
         try {
-            // Load the SQLite JDBC driver
-            Class.forName("org.sqlite.JDBC");
+            // Check if the database file exists
+            File dbFile = new File("easypass3.db");
+            if (!dbFile.exists()) {
+                // Clear the console
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                // Connect to the database
+                this.connection = DriverManager.getConnection("jdbc:sqlite:easypass3.db");
 
-            // Connect to the database
-            this.connection = DriverManager.getConnection("jdbc:sqlite:easypass2.db");
-            System.out.println("Connection to SQLite has been established.");
+                DatabaseMetaData meta = this.connection.getMetaData();
 
-            DatabaseMetaData meta = this.connection.getMetaData();
-            System.out.println("The driver name is " + meta.getDriverName());
-            System.out.println("A new database has been created.");
 
-        } catch (ClassNotFoundException | SQLException e) {
+                System.out.println(
+                        PrintedColor.successMessage + "===================================");
+                System.out.println("Connection to SQLite has been established.");
+                System.out.println("|  A new database" + dbFile + "has been created. |");
+                System.out.println(" The driver name is " + meta.getDriverName());
+                System.out.println("===================================" + PrintedColor.resetColor);
+            } else {
+                // Clear the console
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println(
+                        PrintedColor.successMessage + "===================================");
+                System.out.println("Connection to SQLite has been established.");
+                System.out.println("===================================" + PrintedColor.resetColor);
+                // Connect to the database without printing the messages
+                this.connection = DriverManager.getConnection("jdbc:sqlite:easypass3.db");
+            }
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

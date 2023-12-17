@@ -62,7 +62,7 @@ public class LoggingHelper {
 
     public static void logToFile(String message, Object... args) {
         message = message.replaceAll("\u001B\\[[;\\d]*m", "");
-        logger.log(Level.INFO, String.format(message, args));
+        logger.log(Level.SEVERE, String.format(message, args));
 
     }
 }

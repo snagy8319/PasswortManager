@@ -1,2 +1,8 @@
 [17.12.2023 17:24:18] [INFO   ] User login has been failed with Username tet 
 [17.12.2023 17:24:23] [INFO   ] User has been logged in with Username Nase 
+[17.12.2023 18:17:23] [INFO   ] User has been logged in with Username Test 
+[17.12.2023 18:20:54] [INFO   ] User login has been failed with Username test 
+[17.12.2023 18:20:58] [INFO   ] User has been logged in with Username Test 
+[17.12.2023 18:25:14] [SEVERE ] User login has been failed with Username test 
+[17.12.2023 18:30:00] [SEVERE ] User login has been failed with Username test 
+[17.12.2023 18:30:11] [SEVERE ] User has been logged in with Username Test 
