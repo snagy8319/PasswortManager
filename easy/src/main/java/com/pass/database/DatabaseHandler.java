@@ -12,6 +12,7 @@ import com.pass.helper.ui.PrintedColor;
 
 public class DatabaseHandler {
     private Connection connection;
+    final String databaseName = "easypass2.db";
 
     public DatabaseHandler() {
         try {
@@ -29,13 +30,13 @@ public class DatabaseHandler {
     private void connectToDatabase() throws ClassNotFoundException {
         try {
             // Check if the database file exists
-            File dbFile = new File("easypass3.db");
+            File dbFile = new File(databaseName);
             if (!dbFile.exists()) {
                 // Clear the console
                 System.out.print("\033[H\033[2J");
                 System.out.flush();
                 // Connect to the database
-                this.connection = DriverManager.getConnection("jdbc:sqlite:easypass3.db");
+                this.connection = DriverManager.getConnection("jdbc:sqlite:" + databaseName);
 
                 DatabaseMetaData meta = this.connection.getMetaData();
 
@@ -43,7 +44,7 @@ public class DatabaseHandler {
                 System.out.println(
                         PrintedColor.successMessage + "===================================");
                 System.out.println("Connection to SQLite has been established.");
-                System.out.println("|  A new database" + dbFile + "has been created. |");
+                System.out.println("|  A new database" + databaseName + "has been created. |");
                 System.out.println(" The driver name is " + meta.getDriverName());
                 System.out.println("===================================" + PrintedColor.resetColor);
             } else {
@@ -55,7 +56,7 @@ public class DatabaseHandler {
                 System.out.println("Connection to SQLite has been established.");
                 System.out.println("===================================" + PrintedColor.resetColor);
                 // Connect to the database without printing the messages
-                this.connection = DriverManager.getConnection("jdbc:sqlite:easypass3.db");
+                this.connection = DriverManager.getConnection("jdbc:sqlite:" + databaseName);
             }
 
         } catch (SQLException e) {

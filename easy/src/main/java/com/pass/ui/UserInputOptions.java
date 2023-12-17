@@ -58,6 +58,11 @@ public class UserInputOptions {
      */
     public static void registration(Scanner scanner, Users users) {
 
+        if (userNameCurrent != "" && userNameCurrent != null) {
+            LoggingHelper.logToFile("Please logout to register a new user");
+            return;
+        }
+
         System.out.println(PrintedColor.warningMessage + "===================================");
         System.out.println("|           REGISTER             |");
         System.out.println("===================================" + PrintedColor.resetColor);
@@ -105,8 +110,9 @@ public class UserInputOptions {
 
 
         isLoginSuccessful = UserInputHandler.login(username, password);
-        userNameCurrent = username;
+
         if (isLoginSuccessful) {
+            userNameCurrent = username;
             LoggingHelper.logToFile(
                     PrintedColor.successMessage + "User has been logged in with Username "
                             + username + PrintedColor.resetColor);
@@ -133,12 +139,12 @@ public class UserInputOptions {
             LoggingHelper.logToFile("No user is currently logged in");
         }
 
-        userNameCurrent = null;
+        userNameCurrent = "";
         isLoginSuccessful = false;
 
 
 
-        if (userNameCurrent == null) {
+        if (userNameCurrent == null || userNameCurrent.equals("")) {
             LoggingHelper.logToFile("User has been logged out");
         } else {
             LoggingHelper.logToFile("User failed to log out");
